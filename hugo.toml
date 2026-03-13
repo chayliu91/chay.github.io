@@ -1,0 +1,98 @@
+baseURL = 'https://example.org/'
+languageCode = 'zh-cn'
+title = 'Chay'
+theme = "hugo-PaperMod"
+
+hasCJKLanguage = true
+enableEmoji = true
+enableInlineShortcodes = true
+
+[outputs]
+  home = ["HTML", "RSS", "JSON"]
+
+# 👇 导航菜单配置
+[[menu.main]]
+  name = "🏠 首页"
+  url = "/"
+  weight = 1
+
+# 🔍 关键：搜索功能 (必须包含 identifier = "search")
+[[menu.main]]
+  identifier = "search"
+  name = "🔍 搜索"
+  url = "/search/"
+  weight = 2
+
+[[menu.main]]
+  name = "🏷️ 标签"
+  url = "/tags/"
+  weight = 3
+
+[[menu.main]]
+  name = "📦 归档"
+  url = "/archive/"
+  weight = 4
+
+[[menu.main]]
+  name = "💡 关于"
+  url = "/about/"
+  weight = 5
+
+[params]
+  env = "production"
+  title = "Chay 的博客"
+  description = "记录技术与生活"
+  defaultTheme = "auto"
+  DateFormat = "2006年1月2日"
+
+  ShowToc = true
+  TocOpen = true
+  ShowWordCount = true
+  ShowReadingTime = true
+  ShowBreadCrumbs = true
+  ShowPostNavLinks = true
+  ShowCodeCopyButtons = true
+  hideFooter = false
+
+  [params.profileMode]
+    enabled = true                # 开启名片模式
+    title = "Hi there 👋"         # 大标题
+    subtitle = "欢迎访问我的博客 | Welcome to my blog" # 副标题
+    imageUrl = "/images/KungFuPanda.png" # 替换为你的头像 URL
+    imageWidth = 150
+    imageHeight = 150
+    imageTitle = "我的头像"
+
+  [[params.profileMode.buttons]]
+      name = "📦 归档"
+      url = "/archive/"
+    [[params.profileMode.buttons]]
+      name = "📝 技术笔记"
+      url = "/posts/" # 确保你有 posts 文件夹，或者改为 /tags/
+
+
+   [[params.socialIcons]]
+    name = "github"
+    url = "https://github.com/你的用户名" # 请替换为真实链接
+
+
+  [[params.socialIcons]]
+    name = "email"
+    url = "mailto:chayliu91@gmail.com" # 建议加上邮箱
+
+
+[markup]
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true
+  [markup.highlight]
+    style = "abap"       # 代码高亮风格
+    lineNos = true       # 显示行号
+    codeFences = true
+    guessSyntax = true
+
+[privacy]
+  [privacy.twitter]
+    disableInlineCSS = true
+  [privacy.youtube]
+    privacyEnhanced = true
