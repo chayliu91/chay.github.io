@@ -1,0 +1,84 @@
+# .github/workflows/hugo.yml
+
+name: Deploy Hugo site to Pages
+
+on:
+  # 当推送到 main 分支时触发
+  push:
+    branches:
+      - main
+
+  # 允许手动在工作流标签页触发
+  workflow_dispatch:
+
+# 设置 GITHUB_TOKEN 的权限，以允许部署到 GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# 只允许一个并发部署，跳过正在运行的和队列中的部署
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+# 默认使用 bash 运行
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  # 构建工作
+  build:
+    runs-on: ubuntu-latest
+    env:
+      HUGO_VERSION: 0.128.0 # 建议指定一个稳定的 Hugo 版本，或者留空使用最新
+    steps:
+      - name: Install Hugo CLI
+        run: |
+          wget -O $RUNNER_TEMP/hugo.deb https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_linux-amd64.deb \
+          && sudo dpkg -i $RUNNER_TEMP/hugo.deb
+
+      - name: Install Dart Sass
+        run: sudo snap install dart-sass
+
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive # 关键：递归拉取子模块（如 PaperMod 主题）
+          fetch-depth: 0
+
+      - name: Setup Pages
+        id: pages
+        uses: actions/configure-pages@v5
+
+      - name: Install Node.js dependencies
+        run: "[[ -f package-lock.json || -f npm-shrinkwrap.json ]] && npm ci || true"
+
+      - name: Build with Hugo
+        env:
+          HUGO_CACHEDIR: ${{ runner.temp }}/hugo_cache
+          HUGO_ENVIRONMENT: production
+          TZ: Asia/Shanghai # 设置时区，确保文章发布时间正确
+        run: |
+          hugo \
+            --gc \
+            --minify \
+            --baseURL "${{ steps.pages.outputs.base_url }}/"
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./public
+
+  # 部署工作
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
