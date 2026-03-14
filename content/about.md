@@ -1,6 +1,6 @@
 ---
 title: "关于我"
-description: "这里是关于 Chay 的介绍"
+description: ""
 date: 2023-10-27
 TocOpen: false
 hidemeta: true

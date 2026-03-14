@@ -1,0 +1,38 @@
+{{/* layouts/partials/sidebar-tree.html */}}
+{{ $currentUrl := .RelPermalink }}
+
+<ul class="nav-subitems-level">
+  {{ range .items }}
+  <li class="nav-item-level">
+    {{ if .subitems }}
+      <!-- 有子菜单：显示为可折叠组 -->
+      {{ $isOpen := false }}
+      {{/* 递归检查：如果当前页面是子孙页面，则自动展开父级 */}}
+      {{ range .subitems }}
+         {{ if eq $currentUrl .url }}
+           {{ $isOpen = true }}
+         {{ end }}
+         {{/* 深度检查：如果子项里还有子项且包含当前页，也要展开 (简化版逻辑) */}}
+         {{ if and .subitems (in (printf "%v" .subitems) $currentUrl) }} 
+            {{ $isOpen = true }} 
+         {{ end }}
+      {{ end }}
+      
+      <!-- 标题行 -->
+      <div class="nav-group-title {{ if $isOpen }}active{{ end }}" onclick="toggleSidebarNav(this)">
+        <span>{{ .name }}</span>
+        <span class="arrow">{{ if $isOpen }}▲{{ else }}▼{{ end }}</span>
+      </div>
+
+      <!-- 递归调用自己！这里是实现无限层级的关键 -->
+      {{ partial "sidebar-tree.html" (dict "items" .subitems "RelPermalink" $currentUrl) }}
+      
+    {{ else }}
+      <!-- 叶子节点：直接链接 -->
+      <a href="{{ .url }}" class="nav-link-item {{ if eq $currentUrl .url }}active-link{{ end }}">
+        {{ .name }}
+      </a>
+    {{ end }}
+  </li>
+  {{ end }}
+</ul>
