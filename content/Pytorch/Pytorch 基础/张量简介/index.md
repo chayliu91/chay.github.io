@@ -1,10 +1,10 @@
 ---
 title: "张量简介"
-date: 2024-03-13
+date: 2026-03-13
 draft: false
-# 3. 分类保持不变 (用于左侧导航树)
 categories: ["Pytorch", "Pytorch 基础"]
 tags: ["Pytorch"]
+weight: 1
 ---
 
 # 张量简介

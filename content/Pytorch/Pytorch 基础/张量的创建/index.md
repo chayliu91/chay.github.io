@@ -1,9 +1,11 @@
 ---
 title: "张量的创建"
 date: 2026-03-13
-categories: ["Pytorch", "Pytorch 基础", "张量的创建"]
+draft: false
+categories: ["Pytorch", "Pytorch 基础"]
+tags: ["Pytorch"]
+weight: 2
 ---
-
 
 
 # 直接创建
