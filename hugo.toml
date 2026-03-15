@@ -1,7 +1,7 @@
-baseURL = "https://chayliu91.github.io/"
+baseURL = "https://chay-1991.github.io/"
 languageCode = 'zh-cn'
 defaultContentLanguage = 'zh-cn'
-title = 'Panda'
+title = 'Chay'
 theme = "hugo-PaperMod"
 
 hasCJKLanguage = true
@@ -86,7 +86,7 @@ enableInlineShortcodes = true
 
   [[params.socialIcons]]
     name = "email"
-    url = "mailto:chayliu91@gmail.com" # 建议加上邮箱
+    url = "mailto:852970697@qq.com" # 建议加上邮箱
 
 
 [markup]
