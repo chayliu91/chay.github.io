@@ -439,20 +439,69 @@
     <!-- 左侧导航 -->
     <aside class="sidebar-nav-container">
         <ul class="nav-tree-root">
-            {{- $scratch := newScratch }}{{- $scratch.Set "allTopCats" slice }}
-            {{- range site.Pages }}{{- if and .IsPage .Params.categories }}{{- if gt (len .Params.categories) 0 }}{{-
-            $first := index .Params.categories 0 }}{{- $scratch.Add "allTopCats" $first }}{{- end }}{{- end }}{{- end }}
-            {{- $allRawCats := $scratch.Get "allTopCats" }}{{- $topCats := uniq $allRawCats }}{{- $topCats = sort
-            $topCats }}
-            {{- range $topCats }}{{- $cat := . }}{{- $isActive := false }}{{- range site.Pages }}{{- if and .IsPage
-            .Params.categories }}{{- if eq (index .Params.categories 0) $cat }}{{- if eq $.RelPermalink .RelPermalink
-            }}{{ $isActive = true }}{{ end }}{{- end }}{{- end }}{{- end }}
-            <li class="nav-item-root">
-                <div class="nav-group-title {{ if $isActive }}active{{ end }}" onclick="toggleSidebarNav(this)">
-                    <span>{{ $cat }}</span><span class="arrow">{{ if $isActive }}▲{{ else }}▼{{ end }}</span>
-                </div>
-                {{ template "render-dynamic-nav" dict "currentPathStr" $cat "currentUrl" $.RelPermalink "depth" 0 }}
-            </li>
+            {{- /* 1. 获取所有出现过的顶层分类 */}}
+            {{- $scratch := newScratch }}
+            {{- $scratch.Set "allTopCats" slice }}
+            {{- range site.Pages }}
+              {{- if and .IsPage .Params.categories }}
+                {{- if gt (len .Params.categories) 0 }}
+                  {{- $first := index .Params.categories 0 }}
+                  {{- $scratch.Add "allTopCats" $first }}
+                {{- end }}
+              {{- end }}
+            {{- end }}
+            {{- $allRawCats := $scratch.Get "allTopCats" }}
+            {{- $uniqueCats := uniq $allRawCats }}
+
+            {{- /* 2. 🚀 核心修改：在这里定义你想要的顺序 (categories) */}}
+            {{- /* 把你想排在前面的写在前面，后面的依次排列 */}}
+            {{- $myOrder := slice "Pytorch" "EdgeDevelopment" }}
+
+            {{- /* 3. 按照自定义顺序渲染 */}}
+            {{- range $myOrder }}
+              {{- $catName := . }}
+              {{- /* 只有当该分类确实存在于文章中时才渲染 */}}
+              {{- if in $uniqueCats $catName }}
+
+                {{- /* 计算当前项是否激活 (高亮) */}}
+                {{- $isActive := false }}
+                {{- range site.Pages }}
+                  {{- if and .IsPage .Params.categories }}
+                    {{- if eq (index .Params.categories 0) $catName }}
+                      {{- if eq $.RelPermalink .RelPermalink }}{{ $isActive = true }}{{ end }}
+                    {{- end }}
+                  {{- end }}
+                {{- end }}
+
+                <li class="nav-item-root">
+                  <div class="nav-group-title {{ if $isActive }}active{{ end }}" onclick="toggleSidebarNav(this)">
+                    <span>{{ $catName }}</span><span class="arrow">{{ if $isActive }}▲{{ else }}▼{{ end }}</span>
+                  </div>
+                  {{ template "render-dynamic-nav" dict "currentPathStr" $catName "currentUrl" $.RelPermalink "depth" 0 }}
+                </li>
+              {{- end }}
+            {{- end }}
+
+            {{- /* 4. (可选) 渲染剩余未指定的分类，防止新加的分类不显示 */}}
+            {{- range $uniqueCats }}
+              {{- if not (in $myOrder .) }}
+                {{- $catName := . }}
+                {{- $isActive := false }}
+                {{- range site.Pages }}
+                  {{- if and .IsPage .Params.categories }}
+                    {{- if eq (index .Params.categories 0) $catName }}
+                      {{- if eq $.RelPermalink .RelPermalink }}{{ $isActive = true }}{{ end }}
+                    {{- end }}
+                  {{- end }}
+                {{- end }}
+
+                <li class="nav-item-root">
+                  <div class="nav-group-title {{ if $isActive }}active{{ end }}" onclick="toggleSidebarNav(this)">
+                    <span>{{ $catName }}</span><span class="arrow">{{ if $isActive }}▲{{ else }}▼{{ end }}</span>
+                  </div>
+                  {{ template "render-dynamic-nav" dict "currentPathStr" $catName "currentUrl" $.RelPermalink "depth" 0 }}
+                </li>
+              {{- end }}
             {{- end }}
         </ul>
     </aside>
